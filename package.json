@@ -1,0 +1,22 @@
+{
+  "name": "stone-paper-scissors-ultimate-arena",
+  "version": "1.0.0",
+  "description": "Stone Paper Scissors: Ultimate Arena — 3D WebGL & Real-Time Online 1v1 Multiplayer",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node tests/run-tests.js && node tests/multiplayer-tests.js"
+  },
+  "keywords": [
+    "stone-paper-scissors",
+    "threejs",
+    "socketio",
+    "multiplayer"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

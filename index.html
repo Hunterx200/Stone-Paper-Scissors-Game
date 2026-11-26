@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Stone · Paper · Scissors: Ultimate Arena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- 3D WebGL Arena Canvas -->
+    <canvas id="arena-canvas"></canvas>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <!-- MAIN MENU -->
+    <section id="menu-screen" class="screen">
+        <div class="menu-shell glass-panel">
+            <div class="menu-top-row">
+                <span class="brand-badge">3D ARENA</span>
+                <button id="btn-help" class="icon-btn" type="button" title="How to Play">? Help</button>
+            </div>
+
+            <div class="brand-header">
+                <h1>Stone · Paper · Scissors</h1>
+                <p class="subtitle">Simple to Play · Fun to Master</p>
+            </div>
+
+            <div class="profile-pill" id="menu-profile-pill">
+                <span id="menu-player-name">Challenger</span>
+                <span class="pill-sep">•</span>
+                <span>Lv. <strong id="menu-player-level">1</strong></span>
+                <span class="pill-sep">•</span>
+                <span><strong id="menu-player-xp">0</strong> XP</span>
+                <span class="pill-sep">•</span>
+                <span>🔥 <strong id="menu-player-streak">0</strong></span>
+            </div>
+
+            <nav class="menu-nav" aria-label="Main Menu">
+                <button id="btn-quick-play" class="menu-btn primary play-now-btn" type="button">
+                    <span>▶ PLAY NOW</span>
+                    <small id="quick-play-meta">Classic · Easy · Best of 3</small>
+                </button>
+                <button id="btn-online" class="menu-btn" type="button">🌐 Online 1v1</button>
+                <button id="btn-modes" class="menu-btn" type="button">🎮 Game Modes</button>
+                <div class="menu-grid-2">
+                    <button id="btn-profile" class="menu-btn" type="button">👤 Profile</button>
+                    <button id="btn-settings" class="menu-btn" type="button">⚙️ Settings</button>
+                </div>
+            </nav>
+        </div>
+    </section>
+
+    <!-- GAMEPLAY HUD -->
+    <section id="arena-screen" class="hud hidden">
+        <header class="top-bar">
+            <div class="brand">
+                <button id="btn-back-menu" class="icon-btn" type="button" title="Back to Menu">← Menu</button>
+                <span id="mode-badge" class="brand-badge">CLASSIC</span>
+            </div>
+            <div class="controls">
+                <button id="btn-arena-help" class="icon-btn" type="button" title="How to Play">?</button>
+                <button id="btn-arena-settings" class="icon-btn" type="button" title="Theme & Settings">⚙️</button>
+                <button id="sound-toggle" class="icon-btn" type="button" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+                <button id="reset-btn" class="action-btn" type="button">Restart</button>
+            </div>
+        </header>
+
+        <section class="score-board" aria-label="Scoreboard">
+            <div class="score-card player-card">
+                <span id="p1-label" class="score-label">You</span>
+                <p id="user-score" class="score-value">0</p>
+            </div>
+
+            <div class="vs-pill">
+                <span class="round-label">Round <strong id="round-count">0</strong></span>
+                <span id="vs-center-text" class="vs-text">BO3</span>
+                <span class="streak-label">Streak: <strong id="streak-count">0</strong></span>
+            </div>
+
+            <div class="score-card comp-card">
+                <span id="p2-label" class="score-label">Computer</span>
+                <p id="computer-score" class="score-value">0</p>
+            </div>
+        </section>
+
+        <main class="arena-spacer">
+            <div class="msg-container" id="msg-container">
+                <p id="reaction-badge" class="reaction-badge hidden"></p>
+                <p id="msg">Choose your weapon</p>
+                <p id="sub-msg">Click a card below or press 1, 2, 3</p>
+            </div>
+        </main>
+
+        <section class="choices" aria-label="Player Choices">
+            <button class="choice" id="stone" type="button" data-choice="stone">
+                <div class="choice-inner">
+                    <img src="stone.png" alt="Stone">
+                    <span class="choice-name">Stone</span>
+                    <span class="key-hint">1</span>
+                </div>
+            </button>
+            <button class="choice" id="paper" type="button" data-choice="paper">
+                <div class="choice-inner">
+                    <img src="paper.png" alt="Paper">
+                    <span class="choice-name">Paper</span>
+                    <span class="key-hint">2</span>
+                </div>
+            </button>
+            <button class="choice" id="scissors" type="button" data-choice="scissors">
+                <div class="choice-inner">
+                    <img src="scissors.png" alt="Scissors">
+                    <span class="choice-name">Scissors</span>
+                    <span class="key-hint">3</span>
+                </div>
+            </button>
+        </section>
+    </section>
+
+    <!-- MODAL BACKDROP -->
+    <div id="modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-card glass-panel">
+            <div class="modal-header">
+                <h2 id="modal-title">Modal</h2>
+                <button id="modal-close" class="icon-btn" type="button" aria-label="Close">✕</button>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- PASS DEVICE OVERLAY (LOCAL 2P PRIVACY) -->
+    <div id="pvp-handoff" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-card glass-panel center-text">
+            <h2>Pass Device to Player 2</h2>
+            <p class="muted-text">Player 1's move is locked and hidden.</p>
+            <button id="btn-pvp-ready" class="menu-btn primary mt-1" type="button">Player 2 Ready</button>
+        </div>
+    </div>
+
+    <!-- Scripts in strict dependency order (compatible with both file:// and http://) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="js/storage.js"></script>
+    <script defer src="js/progression.js"></script>
+    <script defer src="js/engine.js"></script>
+    <script defer src="js/ai.js"></script>
+    <script defer src="js/audio.js"></script>
+    <script defer src="js/arena3d.js"></script>
+    <script defer src="js/online.js"></script>
+    <script defer src="app.js"></script>
+</body>
+
+</html>
